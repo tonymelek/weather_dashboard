@@ -1,6 +1,6 @@
 .navbar-brand{
 width:100%;
-font-size: 2.5rem;
+font-size: 2rem;
 font-weight: 700;
 }
 .card{
@@ -45,10 +45,20 @@ td:hover{
 }
 .bg-primary{
     color:white;
-    margin: 0 auto;
+   
+    
 }
 .bg-primary img{
     width:50%;
     height:50%;
     margin-left: 25%;
+}
+.container{
+    min-width:85%;
+}
+.form-control{
+    max-width:80%;
+}
+.card{
+    margin: 10px auto 20px;
 }
