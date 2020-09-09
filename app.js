@@ -71,16 +71,25 @@ $(document).on('click', 'td', function () {
     get_req(city_id)
 })
 
-function get_req(city_id) {
-    let lon = world_cities[city_id].Lng
-    let lat = world_cities[city_id].Lat
+function get_req(city_id, lon, lat) {
+    if (city_id !== null) {
+        let lon = world_cities[city_id].Lng
+        let lat = world_cities[city_id].Lat
+    }
     let queryURL = `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&appid=${api_key}&units=metric`
     $.ajax({
         method: 'GET',
         url: queryURL
     }).then(function (response) {
-        console.log(response);
-        $('#city').text(`${world_cities[city_id].City}, ${world_cities[city_id].Country} - ${date}`)
+
+        if (city_id !== null) {
+            $('#city').text(`${world_cities[city_id].City}, ${world_cities[city_id].Country} - ${date}`)
+        } else {
+
+            let city = response.timezone.split('/')[1] + ',' + response.timezone.split('/')[0]
+            $('#city').text(`${city} - ${date}`)
+        }
+
         $('#city').append($(`<span><img src="http://openweathermap.org/img/wn/${response.current.weather[0].icon}.png" width=80></span>`))
         $('#temp').text(`Temperature: ${response.current.temp} C`)
         $('#humidity').text(`Humidity: ${response.current.humidity} %`)
@@ -125,9 +134,8 @@ function get_req(city_id) {
 
         let uvi = $(`<span style="background-color:${uv_color}"> ${response.current.uvi} </span>`)
         $('#uv').append(uvi)
-        for (let i = 1; i < 5; i++) {
+        for (let i = 1; i < 6; i++) {
             $(`h3.day${i}`).text(`${moment().add(i, 'day').format('DD/MM/YY')}`)
-            console.log(`http://openweathermap.org/img/wn/${response.daily[i].weather[0].icon}.png`)
             $(`img.day${i}`).attr('src', `http://openweathermap.org/img/wn/${response.daily[i].weather[0].icon}.png`)
             $(`p.day${i}`).html(`Temp.: ${response.daily[i].temp.day}C<br>Humidity: ${response.daily[i].humidity}%`)
 
@@ -176,3 +184,23 @@ function save_new_city(id) {
         $('tbody').append(new_row)
     }
 }
+
+
+//Initial Run
+var options = {
+    enableHighAccuracy: true,
+    timeout: 5000,
+    maximumAge: 0
+};
+
+function success(pos) {
+    var crd = pos.coords;
+    get_req(null, crd.longitude, crd.latitude)
+
+}
+
+function error(err) {
+    console.warn(`ERROR(${err.code}): ${err.message}`);
+}
+
+navigator.geolocation.getCurrentPosition(success, error, options);
