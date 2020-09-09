@@ -50,7 +50,7 @@ $('form').submit((e) => {
     $('.search-results').hide()
     if ($('.results-list li:first-child').attr('id')) {
         save_new_city($('.results-list li:first-child').attr('id').slice(5))
-        get_req(this.id.slice(5))
+        get_req($('.results-list li:first-child').attr('id').slice(5))
     }
 })
 
@@ -86,7 +86,7 @@ function get_req(city_id, lon, lat) {
             $('#city').text(`${world_cities[city_id].City}, ${world_cities[city_id].Country} - ${date}`)
         } else {
 
-            let city = response.timezone.split('/')[1] + ',' + response.timezone.split('/')[0]
+            let city = response.timezone.split('/')[1] + ', ' + response.timezone.split('/')[0]
             $('#city').text(`${city} - ${date}`)
         }
 
