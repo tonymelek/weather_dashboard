@@ -73,8 +73,8 @@ $(document).on('click', 'td', function () {
 
 function get_req(city_id, lon, lat) {
     if (city_id !== null) {
-        let lon = world_cities[city_id].Lng
-        let lat = world_cities[city_id].Lat
+        lon = world_cities[city_id].Lng
+        lat = world_cities[city_id].Lat
     }
     let queryURL = `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&appid=${api_key}&units=metric`
     $.ajax({
