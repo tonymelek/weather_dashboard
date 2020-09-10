@@ -97,8 +97,8 @@ function get_req(city_id, lon, lat) {
         }
         //Populate to page the response result
         $('#city').append($(`<span><img src="http://openweathermap.org/img/wn/${response.current.weather[0].icon}.png" width=80></span>`))
-        $('#temp').html(`Temperature: ${response.current.temp} <sup>o</sup>C`)
-        $('#humidity').text(`Humidity: ${response.current.humidity} %`)
+        $('#temp').html(`Temp: ${response.current.temp}<sup>o</sup>C`)
+        $('#humidity').text(`Humidity: ${response.current.humidity}%`)
         $('#wind').text(`Wind Speed: ${response.current.wind_speed} km/h`)
         $('#uv').text(`UV index:`)
         let uv_color = ""
@@ -146,7 +146,7 @@ function get_req(city_id, lon, lat) {
         for (let i = 1; i < 6; i++) {
             $(`h3.day${i}`).text(`${moment().add(i, 'day').format('DD/MM/YY')}`)
             $(`img.day${i}`).attr('src', `http://openweathermap.org/img/wn/${response.daily[i].weather[0].icon}.png`)
-            $(`p.day${i}`).html(`Temp.: ${response.daily[i].temp.day} <sup> o</sup>C<br>Humidity: ${response.daily[i].humidity}%`)
+            $(`p.day${i}`).html(`Temp.: ${Math.round(response.daily[i].temp.day)} <sup> o</sup>C<br>Humidity: ${response.daily[i].humidity}%`)
 
         }
 

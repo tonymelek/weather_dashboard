@@ -63,3 +63,7 @@ td:hover{
     margin: 10px auto 20px;
     padding-top: 5px;
 }
+.card-body{
+    padding: 8px;
+    margin: 0 auto;
+}
