@@ -1,8 +1,12 @@
+//Global Variables Initialisation
 let world_cities = []
 let saved_cities = []
 const api_key = 'd05b6385102502383aa0588c693a27e9'
 const date = moment().format('ddd, DD/MM/YYYY')
 
+
+$('img').hide()
+// Load world cities if not found in LocalStorage
 if (!localStorage.getItem('world_cities')) {
     $.getJSON('./cities.json', function (data) {
         localStorage.setItem('world_cities', JSON.stringify(data))
@@ -11,7 +15,7 @@ if (!localStorage.getItem('world_cities')) {
 } else {
     world_cities = JSON.parse(localStorage.getItem('world_cities'))
 }
-
+// Load saved cities from Local Storage if found and populate to the page
 if (localStorage.getItem('saved_cities')) {
     saved_cities = JSON.parse(localStorage.getItem('saved_cities'))
     for (let city of saved_cities) {
@@ -23,10 +27,7 @@ if (localStorage.getItem('saved_cities')) {
 }
 
 
-
-
-
-
+//Display found cities on key up for user to choose from when the user enters 4 or more characters
 $('.form-control').keyup(function () {
     $('.search-results').hide()
     console.clear()
@@ -42,9 +43,9 @@ $('.form-control').keyup(function () {
         }
         found ? $('.search-results').slideDown('slow') : $('.search-results').slideUp('slow')
     }
-
-
 })
+
+//Display results on form submit and add city to local Storage
 $('form').submit((e) => {
     e.preventDefault();
     $('.search-results').hide()
@@ -54,25 +55,30 @@ $('form').submit((e) => {
     }
 })
 
+//Display results on user's choice click from the dropdown list
 $(document).on('click', '.results-list li', function () {
     $('.search-results').hide()
     save_new_city(this.id.slice(5))
     get_req(this.id.slice(5))
 
 })
+
+//Remove item from saved list on double click
 $(document).on('dblclick', 'td', function () {
     $('.search-results').hide()
     remove_city(this.parentElement.id.slice(4))
     $(`#${this.parentElement.id}`).remove()
 })
+//Display results on user's choice click from the saved cities list
 $(document).on('click', 'td', function () {
     $('.search-results').hide()
     let city_id = this.parentElement.id.slice(4)
     get_req(city_id)
 })
-
+//Main function handling the request and display results
 function get_req(city_id, lon, lat) {
-    if (city_id !== null) {
+    $('img').show()
+    if (city_id !== null) { //If null passed , use browser geolocation to get coordinates on first run
         lon = world_cities[city_id].Lng
         lat = world_cities[city_id].Lat
     }
@@ -89,13 +95,14 @@ function get_req(city_id, lon, lat) {
             let city = response.timezone.split('/')[1] + ', ' + response.timezone.split('/')[0]
             $('#city').text(`${city} - ${date}`)
         }
-
+        //Populate to page the response result
         $('#city').append($(`<span><img src="http://openweathermap.org/img/wn/${response.current.weather[0].icon}.png" width=80></span>`))
-        $('#temp').text(`Temperature: ${response.current.temp} C`)
+        $('#temp').html(`Temperature: ${response.current.temp} <sup>o</sup>C`)
         $('#humidity').text(`Humidity: ${response.current.humidity} %`)
         $('#wind').text(`Wind Speed: ${response.current.wind_speed} km/h`)
         $('#uv').text(`UV index:`)
         let uv_color = ""
+        //UV Index colouring
         switch (parseInt(response.current.uvi)) {
             case 1:
                 uv_color = '#00b050'
@@ -134,10 +141,12 @@ function get_req(city_id, lon, lat) {
 
         let uvi = $(`<span style="background-color:${uv_color}"> ${response.current.uvi} </span>`)
         $('#uv').append(uvi)
+
+        //5 Day Forecast 
         for (let i = 1; i < 6; i++) {
             $(`h3.day${i}`).text(`${moment().add(i, 'day').format('DD/MM/YY')}`)
             $(`img.day${i}`).attr('src', `http://openweathermap.org/img/wn/${response.daily[i].weather[0].icon}.png`)
-            $(`p.day${i}`).html(`Temp.: ${response.daily[i].temp.day}C<br>Humidity: ${response.daily[i].humidity}%`)
+            $(`p.day${i}`).html(`Temp.: ${response.daily[i].temp.day} <sup> o</sup>C<br>Humidity: ${response.daily[i].humidity}%`)
 
         }
 
@@ -150,7 +159,7 @@ function get_req(city_id, lon, lat) {
 
 
 }
-
+//Remove city from Saved items
 function remove_city(id) {
     for (let i in saved_cities) {
         if (saved_cities[i].id == id) {
@@ -159,7 +168,7 @@ function remove_city(id) {
         localStorage.setItem('saved_cities', JSON.stringify(saved_cities))
     }
 }
-
+//Add New City into Saved items only if not found in the existing list
 function save_new_city(id) {
     let found = false
     id = parseInt(id)
@@ -186,7 +195,7 @@ function save_new_city(id) {
 }
 
 
-//Initial Run
+// [Get coordinates from user browser]
 var options = {
     enableHighAccuracy: true,
     timeout: 5000,
@@ -202,5 +211,5 @@ function success(pos) {
 function error(err) {
     console.warn(`ERROR(${err.code}): ${err.message}`);
 }
-
+//Initial Run 
 navigator.geolocation.getCurrentPosition(success, error, options);
