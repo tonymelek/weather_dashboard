@@ -77,16 +77,26 @@ $(document).on('click', 'td', function () {
 })
 //Main function handling the request and display results
 function get_req(city_id, lon, lat) {
-    $('img').show()
+    let uv = 0
+
     if (city_id !== null) { //If null passed , use browser geolocation to get coordinates on first run
         lon = world_cities[city_id].Lng
         lat = world_cities[city_id].Lat
     }
+    // use uv api call as one call api stopped retuening UVI
+    $.ajax({
+        type: 'GET',
+        url: `https://api.openweathermap.org/data/2.5/uvi?lat=${lat}&lon=${lon}&appid=${api_key}`
+    })
+        .then((response) => uv = response.value)
+
+    //set URL for One Call API 
     let queryURL = `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&appid=${api_key}&units=metric`
     $.ajax({
         method: 'GET',
         url: queryURL
     }).then(function (response) {
+        $('img').show()
 
         if (city_id !== null) {
             $('#city').text(`${world_cities[city_id].City}, ${world_cities[city_id].Country} - ${date}`)
@@ -101,9 +111,15 @@ function get_req(city_id, lon, lat) {
         $('#humidity').text(`Humidity: ${response.current.humidity}%`)
         $('#wind').text(`Wind Speed: ${response.current.wind_speed} km/h`)
         $('#uv').text(`UV index:`)
+
         let uv_color = ""
+
+
         //UV Index colouring
-        switch (parseInt(response.current.uvi)) {
+        switch (parseInt(uv)) {
+            case 0:
+                uv_color = '#00b050'
+                break;
             case 1:
                 uv_color = '#00b050'
                 break;
@@ -139,7 +155,7 @@ function get_req(city_id, lon, lat) {
                 break;
         }
 
-        let uvi = $(`<span style="background-color:${uv_color}"> ${response.current.uvi} </span>`)
+        let uvi = $(`<span style="background-color:${uv_color}"> ${uv} </span>`)
         $('#uv').append(uvi)
 
         //5 Day Forecast 
