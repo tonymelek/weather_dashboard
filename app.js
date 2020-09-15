@@ -77,18 +77,12 @@ $(document).on('click', 'td', function () {
 })
 //Main function handling the request and display results
 function get_req(city_id, lon, lat) {
-    let uv = 0
+
 
     if (city_id !== null) { //If null passed , use browser geolocation to get coordinates on first run
         lon = world_cities[city_id].Lng
         lat = world_cities[city_id].Lat
     }
-    // use uv api call as one call api stopped retuening UVI
-    $.ajax({
-        type: 'GET',
-        url: `https://api.openweathermap.org/data/2.5/uvi?lat=${lat}&lon=${lon}&appid=${api_key}`
-    })
-        .then((response) => uv = response.value)
 
     //set URL for One Call API 
     let queryURL = `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&appid=${api_key}&units=metric`
@@ -110,13 +104,13 @@ function get_req(city_id, lon, lat) {
         $('#temp').html(`Temp: ${response.current.temp}<sup>o</sup>C`)
         $('#humidity').text(`Humidity: ${response.current.humidity}%`)
         $('#wind').text(`Wind Speed: ${response.current.wind_speed} km/h`)
-        $('#uv').text(`UV index:`)
+        $('#uv').text(`UV index: `)
 
         let uv_color = ""
 
 
         //UV Index colouring
-        switch (parseInt(uv)) {
+        switch (parseInt(response.current.uvi)) {
             case 0:
                 uv_color = '#00b050'
                 break;
@@ -155,7 +149,7 @@ function get_req(city_id, lon, lat) {
                 break;
         }
 
-        let uvi = $(`<span style="background-color:${uv_color}"> ${uv} </span>`)
+        let uvi = $(`<span style="background-color:${uv_color}">${response.current.uvi} </span>`)
         $('#uv').append(uvi)
 
         //5 Day Forecast 
@@ -211,21 +205,19 @@ function save_new_city(id) {
 }
 
 
-// [Get coordinates from user browser]
-var options = {
-    enableHighAccuracy: true,
-    timeout: 5000,
-    maximumAge: 0
-};
+// [Get coordinates from user's location from their Public IP]
 
-function success(pos) {
-    var crd = pos.coords;
-    get_req(null, crd.longitude, crd.latitude)
+$.ajax({
+    method: 'GET',
+    url: 'https://api.ipify.org?format=json'
+})
+    .then((response) => {
+        $('h1').text(response.ip)
+        $.ajax({
+            method: 'GET',
+            url: `http://api.ipstack.com/${response.ip}?access_key=3d6d636acd1f2c6955174cd705317a47`
+        }).then(geo_data => {
+            get_req(null, (parseFloat(geo_data.longitude)).toFixed(2), (parseFloat(geo_data.latitude)).toFixed(2))
 
-}
-
-function error(err) {
-    console.warn(`ERROR(${err.code}): ${err.message}`);
-}
-//Initial Run 
-navigator.geolocation.getCurrentPosition(success, error, options);
+        })
+    })
