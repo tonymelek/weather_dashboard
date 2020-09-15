@@ -215,7 +215,7 @@ $.ajax({
         $('h1').text(response.ip)
         $.ajax({
             method: 'GET',
-            url: `http://api.ipstack.com/${response.ip}?access_key=3d6d636acd1f2c6955174cd705317a47`
+            url: `https://ipapi.co/${response.ip}/json/`
         }).then(geo_data => {
             get_req(null, (parseFloat(geo_data.longitude)).toFixed(2), (parseFloat(geo_data.latitude)).toFixed(2))
 
