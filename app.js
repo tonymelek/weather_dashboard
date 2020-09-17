@@ -91,7 +91,7 @@ function get_req(city_id, lon, lat) {
         url: queryURL
     }).then(function (response) {
         $('img').show()
-
+        $('.main').show()
         if (city_id !== null) {
             $('#city').text(`${world_cities[city_id].City}, ${world_cities[city_id].Country} - ${date}`)
         } else {
@@ -100,7 +100,7 @@ function get_req(city_id, lon, lat) {
             $('#city').text(`${city} - ${date}`)
         }
         //Populate to page the response result
-        $('#city').append($(`<span><img src="http://openweathermap.org/img/wn/${response.current.weather[0].icon}.png" width=80></span>`))
+        $('#city').append($(`<span><img alt="weather image" src="http://openweathermap.org/img/w/${response.current.weather[0].icon}.png" width=80></span>`))
         $('#temp').html(`Temp: ${response.current.temp}<sup>o</sup>C`)
         $('#humidity').text(`Humidity: ${response.current.humidity}%`)
         $('#wind').text(`Wind Speed: ${response.current.wind_speed} km/h`)
@@ -155,7 +155,7 @@ function get_req(city_id, lon, lat) {
         //5 Day Forecast 
         for (let i = 1; i < 6; i++) {
             $(`h3.day${i}`).text(`${moment().add(i, 'day').format('DD/MM/YY')}`)
-            $(`img.day${i}`).attr('src', `http://openweathermap.org/img/wn/${response.daily[i].weather[0].icon}.png`)
+            $(`img.day${i}`).attr('src', `http://openweathermap.org/img/w/${response.daily[i].weather[0].icon}.png`)
             $(`p.day${i}`).html(`Temp.: ${Math.round(response.daily[i].temp.day)} <sup> o</sup>C<br>Humidity: ${response.daily[i].humidity}%`)
 
         }
@@ -206,18 +206,19 @@ function save_new_city(id) {
 
 
 // [Get coordinates from user's location from their Public IP]
+$('.main').hide()
+get_req(null, 144.96, -37.81)
+// $.ajax({
+//     method: 'GET',
+//     url: 'https://api.ipify.org?format=json'
+// })
+//     .then((response) => {
+//         $('h1').text(response.ip)
+//         $.ajax({
+//             method: 'GET',
+//             url: `https://ipapi.co/${response.ip}/json/`
+//         }).then(geo_data => {
+//             get_req(null, (parseFloat(geo_data.longitude)).toFixed(2), (parseFloat(geo_data.latitude)).toFixed(2))
 
-$.ajax({
-    method: 'GET',
-    url: 'https://api.ipify.org?format=json'
-})
-    .then((response) => {
-        $('h1').text(response.ip)
-        $.ajax({
-            method: 'GET',
-            url: `https://ipapi.co/${response.ip}/json/`
-        }).then(geo_data => {
-            get_req(null, (parseFloat(geo_data.longitude)).toFixed(2), (parseFloat(geo_data.latitude)).toFixed(2))
-
-        })
-    })
+//         })
+//     })
