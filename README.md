@@ -19,7 +19,7 @@ This is a Weather Dashboard Application. The application uses localStorage to st
 
 * When you type into the search bar more than 3 characters, the matching cities will be displayed in a dropdown menu. **Search is not case sensetive and can be any 4 successive characters in the city name**
 
-* When you click a city from the dropdown, the app will lookup the favourite cities and if not there will be added both on screen and into local storagecand its weather data will be rendered and displayed on the screen, otherwise it will be only displayed onto the screen. **To remove a city from favourites `Double-Click it**
+* When you click a city from the dropdown, the app will lookup the favourite cities and if not there will be added both on screen and into local storage and its weather data will be rendered and displayed on the screen, otherwise it will be only displayed onto the screen. **To remove a city from favourites `Double-Click it**
 
 * If you have chosen to use `Enter/Return` key or the search button , the app will do same behaviour as above considering the first city appearing in the drop down list. **Google's `I am feeling Lucky Concept`
 
